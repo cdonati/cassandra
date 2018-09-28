@@ -278,6 +278,11 @@ public class ByteOrderedPartitioner implements IPartitioner
         {
             for (CFMetaData cfmd : Schema.instance.getTablesAndViews(ks))
             {
+                // Skip CFs that use a different partitioner since their tokens
+                // can't be compared with the BytesTokens in sortedTokens.
+                if (!(cfmd.partitioner instanceof ByteOrderedPartitioner))
+                    continue;
+
                 for (Range<Token> r : sortedRanges)
                 {
                     // Looping over every KS:CF:Range, get the splits size and add it to the count
